@@ -1,9 +1,3 @@
-
----
-
-## 📄 2. `config.js`
-
-```javascript
 /* ============================================================
    FIREBASE CONFIG — WAJIB DIISI UNTUK MULTIPLAYER
    ============================================================
@@ -19,13 +13,13 @@
 'use strict';
 
 window.FIREBASE_CONFIG = {
-  apiKey:            "AIzaSyDUMMY_REPLACE_ME",
+  apiKey:            "AIzaSyDWWMEJ7UY-y6VCINSaIWmF1auC4HqW_3E",
   authDomain:        "pancasila-chronicles.firebaseapp.com",
   databaseURL:       "https://pancasila-chronicles-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId:         "pancasila-chronicles",
-  storageBucket:     "pancasila-chronicles.appspot.com",
-  messagingSenderId: "000000000000",
-  appId:             "1:000000000000:web:0000000000000000000000",
+  storageBucket:     "pancasila-chronicles.firebasestorage.app",
+  messagingSenderId: "683605286991",
+  appId:             "1:683605286991:web:c3ea1729e7292976b68a3a",
 };
 
 // Cek apakah user sudah isi config dengan benar
