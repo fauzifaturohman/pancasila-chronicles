@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pancasila Chronicles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="game-container">
+  <canvas id="game" width="960" height="640"></canvas>
+
+  <!-- ============ HUD ============ -->
+  <div id="hud">
+    <div class="hud-item"><span class="icon">🪙</span><span id="hud-money">0</span></div>
+    <div class="hud-item"><span class="icon">⏰</span><span id="hud-time">06:00</span></div>
+    <div class="hud-item"><span class="icon">📅</span><span id="hud-day">Hari 1</span></div>
+    <div class="hud-item"><span class="icon">❤️</span><span id="hud-stamina">100</span></div>
+    <div class="hud-item" id="hud-karma"><span class="icon">⚖️</span><span id="hud-karma-title">Warga Biasa</span></div>
+    <div class="hud-item" id="hud-family" style="display:none;"><span class="icon">👨‍👩‍👧</span><span id="hud-family-status">—</span></div>
+  </div>
+
+  <!-- ============ HINTS ============ -->
+  <div id="hint" class="hidden">Tekan <b>E</b></div>
+  <div id="travel-hint" class="hidden">Tekan <b>E</b> untuk <b id="travel-hint-text">berlayar</b></div>
+
+  <!-- ============ DIALOG ============ -->
+  <div id="dialog" class="hidden">
+    <div id="dialog-name">NPC</div>
+    <div id="dialog-text"></div>
+    <div id="dialog-choices" class="hidden"></div>
+    <div class="dialog-hint" id="dialog-hint">▼ E / Space</div>
+  </div>
+
+  <!-- ============ INVENTORY ============ -->
+  <div id="inventory" class="hidden">
+    <div class="panel-header">
+      <h2>📦 Inventaris</h2>
+      <span class="panel-hint">I untuk tutup</span>
+    </div>
+    <ul id="inventory-list"></ul>
+  </div>
+
+  <!-- ============ QUEST LOG ============ -->
+  <div id="questlog" class="hidden">
+    <div class="panel-header">
+      <h2>📜 Catatan Misi</h2>
+      <span class="panel-hint">Q untuk tutup</span>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="active">Aktif</button>
+      <button class="tab" data-tab="completed">Selesai</button>
+    </div>
+    <div id="questlog-body"></div>
+  </div>
+
+  <!-- ============ KARMA PANEL ============ -->
+  <div id="karmapanel" class="hidden">
+    <div class="panel-header">
+      <h2>🕊️ Cermin Pancasila</h2>
+      <span class="panel-hint">K untuk tutup</span>
+    </div>
+    <div id="karma-title-box">
+      <span id="karma-title-icon">👤</span>
+      <span id="karma-title-text">Warga Biasa</span>
+    </div>
+    <div id="karma-pillars"></div>
+    <div id="karma-history-title">Jejak Pilihan Terakhir</div>
+    <ul id="karma-history"></ul>
+  </div>
+
+  <!-- ============ FACTION PANEL ============ -->
+  <div id="factionpanel" class="hidden">
+    <div class="panel-header">
+      <h2>🏛️ Peta Persaudaraan</h2>
+      <span class="panel-hint">F untuk tutup</span>
+    </div>
+    <div id="faction-summary">
+      <div id="faction-dominant"></div>
+      <div id="faction-meta"></div>
+    </div>
+    <div id="faction-list"></div>
+  </div>
+
+  <!-- ============ HOUSING PANEL ============ -->
+  <div id="housingpanel" class="hidden">
+    <div class="panel-header">
+      <h2>🏠 Rumahku</h2>
+      <span class="panel-hint">H untuk tutup</span>
+    </div>
+    <div id="housing-header"></div>
+    <div id="housing-content"></div>
+  </div>
+
+  <!-- ============ STORAGE PANEL ============ -->
+  <div id="storagepanel" class="hidden">
+    <div class="panel-header">
+      <h2>📦 Lemari</h2>
+      <span class="panel-hint">Esc untuk tutup</span>
+    </div>
+    <div class="storage-grid">
+      <div class="storage-col">
+        <div class="storage-col-title">🎒 Inventaris (<span id="inv-count">0</span>)</div>
+        <div id="storage-inv" class="storage-list"></div>
+      </div>
+      <div class="storage-col">
+        <div class="storage-col-title">📦 Lemari (<span id="stg-count">0</span>/<span id="stg-cap">0</span>)</div>
+        <div id="storage-stg" class="storage-list"></div>
+      </div>
+    </div>
+    <div class="storage-hint">Klik item untuk pindah · Shift+Klik = 10x</div>
+  </div>
+
+  <!-- ============ FAMILY PANEL ============ -->
+  <div id="familypanel" class="hidden">
+    <div class="panel-header">
+      <h2>👨‍👩‍👧 Keluargaku</h2>
+      <span class="panel-hint">L untuk tutup</span>
+    </div>
+    <div id="family-header"></div>
+    <div id="family-content"></div>
+  </div>
+
+  <!-- ============ PARTY PANEL ============ -->
+  <div id="partypanel" class="hidden">
+    <div class="panel-header">
+      <h2>⚔️ Party</h2>
+      <span class="panel-hint">P untuk tutup</span>
+    </div>
+    <div id="party-header"></div>
+    <div class="housing-section-title">Formasi</div>
+    <div id="party-formations"></div>
+    <div class="housing-section-title">Anggota Party</div>
+    <div id="party-members"></div>
+    <div class="housing-section-title">Rekrut Companion</div>
+    <div id="party-recruit"></div>
+  </div>
+
+  <!-- ============ TRAVEL MENU ============ -->
+  <div id="travelmenu" class="hidden">
+    <div class="panel-header">
+      <h2>🧭 Perjalanan Nusantara</h2>
+      <span class="panel-hint">Esc untuk tutup</span>
+    </div>
+    <div class="travel-current">
+      <span class="travel-current-icon">📍</span>
+      <span id="travel-current-region">Desa Bhinneka</span>
+    </div>
+    <div id="travel-destinations"></div>
+    <div class="travel-modes-title">Moda Transportasi</div>
+    <div id="travel-modes"></div>
+    <button id="travel-confirm" class="travel-confirm-btn" disabled>Berangkat</button>
+  </div>
+
+  <!-- ============ SAVE/LOAD PANEL ============ -->
+  <div id="saveload" class="hidden">
+    <div class="panel-header">
+      <h2>💾 Simpan / Muat</h2>
+      <span class="panel-hint">F8 untuk tutup</span>
+    </div>
+    <div class="sl-tabs">
+      <button class="tab active" data-mode="save">Simpan</button>
+      <button class="tab" data-mode="load">Muat</button>
+    </div>
+    <div id="slots"></div>
+  </div>
+
+  <!-- ============ MULTIPLAYER PANEL ============ -->
+  <div id="mp-panel" class="hidden">
+    <div class="panel-header">
+      <h2>🌐 Multiplayer</h2>
+      <span class="panel-hint">M untuk tutup</span>
+    </div>
+    <div id="mp-status-bar">
+      <span id="mp-status-icon">⚪</span>
+      <span id="mp-status-text">Belum terhubung</span>
+    </div>
+    <div id="mp-disconnected">
+      <div class="mp-section-title">Buat Room</div>
+      <button id="mp-create-btn" class="mp-btn mp-btn-primary">✨ Buat Room Baru</button>
+      <div class="mp-section-title">Atau Gabung Room</div>
+      <div class="mp-join-row">
+        <input id="mp-room-input" type="text" maxlength="6" placeholder="KODE6" class="mp-input" autocomplete="off">
+        <button id="mp-join-btn" class="mp-btn">Gabung</button>
+      </div>
+    </div>
+    <div id="mp-connected" class="hidden">
+      <div class="mp-room-display">
+        <span class="mp-room-label">Kode:</span>
+        <span id="mp-room-code" class="mp-room-code">------</span>
+        <button id="mp-copy-btn" class="mp-btn mp-btn-small">📋</button>
+      </div>
+      <div class="mp-section-title">Pemain (<span id="mp-player-count">1</span>)</div>
+      <div id="mp-player-list"></div>
+      <div class="mp-section-title">💬 Chat</div>
+      <div id="mp-chat-messages"></div>
+      <div class="mp-chat-input-row">
+        <input id="mp-chat-input" type="text" maxlength="200" placeholder="Ketik pesan..." class="mp-input" autocomplete="off">
+        <button id="mp-chat-send" class="mp-btn mp-btn-small">→</button>
+      </div>
+      <button id="mp-leave-btn" class="mp-btn mp-btn-danger">🚪 Keluar Room</button>
+    </div>
+  </div>
+
+  <!-- ============ LEADERBOARD PANEL ============ -->
+  <div id="lb-panel" class="hidden">
+    <div class="panel-header">
+      <h2>🏆 Leaderboard Nusantara</h2>
+      <span class="panel-hint">B untuk tutup</span>
+    </div>
+    <div id="lb-season-header">
+      <div class="lb-season-icon">🏆</div>
+      <div class="lb-season-info">
+        <div class="lb-season-name" id="lb-season-name">Musim 1</div>
+        <div class="lb-season-days" id="lb-season-days">Hari 1 / 30</div>
+      </div>
+    </div>
+    <div id="lb-category-tabs" class="lb-tabs"></div>
+    <div id="lb-scope-tabs" class="lb-tabs">
+      <button class="tab active" data-scope="global">🌏 Global</button>
+      <button class="tab" data-scope="region">📍 Regionku</button>
+      <button class="tab" data-scope="faction">🤝 Suku</button>
+    </div>
+    <div id="lb-my-rank">
+      <div class="my-rank-badge">📊</div>
+      <div class="my-rank-info">
+        <div class="my-rank-number">#<span id="lb-my-rank-num">—</span></div>
+        <div class="my-rank-score">Skor: <span id="lb-my-score">0</span></div>
+        <div class="my-rank-tier" id="lb-my-tier">—</div>
+      </div>
+      <div class="my-rank-avatar" id="lb-my-avatar">👤</div>
+    </div>
+    <div class="lb-section-title">Top Players</div>
+    <div id="lb-top-list"><div class="lb-loading">Memuat...</div></div>
+    <div class="lb-section-title">Di Sekitarmu</div>
+    <div id="lb-nearby-list"></div>
+  </div>
+
+  <!-- ============ OVERLAYS & TOASTS ============ -->
+  <div id="toast"></div>
+  <div id="karma-toast"></div>
+  <div id="faction-toast"></div>
+  <div id="narrative-toast" class="hidden"><div id="narrative-text"></div></div>
+  <div id="lb-toast" class="hidden"><div id="lb-toast-content"></div></div>
+  <div id="fade-overlay"></div>
+</div>
+
+<!-- ============================================================
+     SCRIPT ORDER — WAJIB URUT
+     ============================================================ -->
+<!-- 1. Config (Firebase) -->
+<script src="config.js"></script>
+
+<!-- 2. Data files — urutan penting: tiles dulu, baru interiors -->
+<script src="data/tiles.js"></script>
+<script src="data/karma-config.js"></script>
+<script src="data/factions.js"></script>
+<script src="data/quests.js"></script>
+<script src="data/npcs.js"></script>
+<script src="data/maps.js"></script>
+<script src="data/world.js"></script>
+<script src="data/interiors.js"></script>
+<script src="data/family.js"></script>
+<script src="data/combat.js"></script>
+
+<!-- 3. Systems — urutan sesuai dependency -->
+<script src="systems/karma.js"></script>
+<script src="systems/faction.js"></script>
+<script src="systems/quest.js"></script>
+<script src="systems/dialog.js"></script>
+<script src="systems/npc-reactions.js"></script>
+<script src="systems/save.js"></script>
+<script src="systems/map-manager.js"></script>
+<script src="systems/travel.js"></script>
+<script src="systems/portal.js"></script>
+<script src="systems/housing.js"></script>
+<script src="systems/family.js"></script>
+<script src="systems/score.js"></script>
+<script src="systems/leaderboard.js"></script>
+<script src="systems/party.js"></script>
+<script src="systems/combat.js"></script>
+
+<!-- 4. Game entry (ES Module — import net.js) -->
+<script type="module" src="game.js"></script>
+</body>
+</html>
